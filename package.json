@@ -1,0 +1,26 @@
+{
+  "name": "melkibro",
+  "version": "1.0.0",
+  "description": "A spacebro client to blur images",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "bro",
+    "spacebro",
+    "mail-listener"
+  ],
+  "author": "Emmanuel Geoffray",
+  "license": "ISC",
+  "dependencies": {
+    "download": "^6.2.5",
+    "express": "^4.16.2",
+    "fs-extra": "^6.0.1",
+    "mail-listener-fixed": "ImTheDeveloper/mail-listener-fixed",
+    "mkdirp": "^0.5.1",
+    "spacebro-client": "^0.4.5",
+    "standard-settings": "^1.1.11"
+  }
+}

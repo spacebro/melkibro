@@ -1,0 +1,48 @@
+{
+  "server": {
+    "host": "localhost",
+    "port": 36450
+  },
+  "service": {
+    "spacebro":{
+      "host": "spacebro.space",
+      "port": 3333,
+      "channelName": "media-stream",
+      "client": {
+        "name": "melkibro",
+        "description": "Watch an IMAP mailbox and send media with attached file",
+        "out": {
+          "outMedia": {
+            "eventName": "outMedia",
+            "description": "attached file with params",
+            "type": "all"
+          }
+        }
+      }
+    },
+    "mail":{
+      "imapOptions": {
+        "user": "yourmail@gmail.com",
+        "password": "password",
+        "host": "imap.gmail.com",
+        "port": 993,
+        "tls": true,
+        "connTimeout": 10000,
+        "authTimeout": 5000,
+        "tlsOptions": { "rejectUnauthorized": false }
+      },
+      "debug": null,
+      "mailbox": "INBOX",
+      "searchFilter": ["UNSEEN"],
+      "markSeen": true,
+      "fetchUnreadOnStart": true,
+      "attachmentOptions": {
+        "download": true
+      }
+    }
+  },
+  "folder": {
+    "output": "/tmp/melkibro/output",
+    "tmp": "/tmp/melkibro/tmp"
+  }
+}
