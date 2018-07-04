@@ -33,7 +33,7 @@
       },
       "debug": null,
       "mailbox": "INBOX",
-      "searchFilter": ["UNSEEN"],
+      "filter": ["UNSEEN"],
       "markSeen": true,
       "fetchUnreadOnStart": true,
       "attachmentOptions": {

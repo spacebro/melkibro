@@ -54,7 +54,6 @@ let getBucketAndToken = (address) => {
   }
   return bucketAndToken
 }
-console.log(getBucketAndToken('britney-pompadour?token=BR1TN3Y@socialite.paris'))
 
 let mailListenerMediaToStandardMedia = (mail) => {
   let mailObject = JSON.parse(JSON.stringify(mail))
@@ -62,7 +61,7 @@ let mailListenerMediaToStandardMedia = (mail) => {
   delete mailObject.eml
   let media = {
     meta: {
-      email: mail.to.value,
+      email: mail.to.text,
       melkibro: mailObject
     }
   }
@@ -91,7 +90,7 @@ let mailListenerMediaToStandardMedia = (mail) => {
 
 mailListener.on('mail', (mail, seqno, attributes) => {
   let outMedia = mailListenerMediaToStandardMedia(mail)
-  // spacebroClient.emit(settings.service.spacebro.client.out.outMedia.eventName, outMedia)
+  spacebroClient.emit(settings.service.spacebro.client.out.outMedia.eventName, outMedia)
   console.log('emit ' + JSON.stringify(outMedia, null, 2))
 })
 
