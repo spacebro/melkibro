@@ -74,14 +74,17 @@ let mailListenerMediaToStandardMedia = (mail) => {
 
   let bucketAndToken = getBucketAndToken(mail.from.value[0].address)
   if (bucketAndToken.bucket) {
-    media.meta.altruist = {
-      socialite: {
-        bucket: bucketAndToken.bucket,
-        token: bucketAndToken.token
+    media.meta = {
+      altruist: {
+        socialite: {
+          bucket: bucketAndToken.bucket,
+          token: bucketAndToken.token
+        },
+        mandrill: {
+          template: bucketAndToken.bucket
+        }
       },
-      mandrill: {
-        template: bucketAndToken.bucket
-      }
+      theme: bucketAndToken.bucket
     }
   }
 
