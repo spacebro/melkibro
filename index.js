@@ -6,7 +6,10 @@ const express = require('express')
 const path = require('path')
 const mkdirp = require('mkdirp')
 const fs = require('fs-extra')
+const util = require('util')
+const writeFile = util.promisify(fs.writeFile)
 const _ = require('lodash')
+const helpers = require('./lib/helpers')
 var settings = standardSettings.getSettings()
 
 var spacebroClient = new SpacebroClient()
@@ -55,7 +58,7 @@ let getBucketAndToken = (address) => {
   return bucketAndToken
 }
 
-let mailListenerMediaToStandardMedia = (mail) => {
+let mailListenerMediaToStandardMedia = async (mail) => {
   let mailObject = JSON.parse(JSON.stringify(mail))
   delete mailObject.attachments
   delete mailObject.eml
@@ -68,8 +71,9 @@ let mailListenerMediaToStandardMedia = (mail) => {
 
   if (mail.attachments) {
     let file = mail.attachments[0]
-    fs.moveSync(file.path, path.join(settings.folder.output, file.filename), { overwrite: true })
-    media.url = `http://${settings.server.host}:${settings.server.port}/${file.filename}`
+    let filepath = await helpers.getUniquePath(file.filename, settings.folder.output)
+    await writeFile(filepath, file.content)
+    media.url = `http://${settings.server.host}:${settings.server.port}/${path.relative(settings.folder.output, filepath)}`
   }
 
   let bucketAndToken = getBucketAndToken(mail.from.value[0].address)
@@ -91,8 +95,8 @@ let mailListenerMediaToStandardMedia = (mail) => {
   return media
 }
 
-mailListener.on('mail', (mail, seqno, attributes) => {
-  let outMedia = mailListenerMediaToStandardMedia(mail)
+mailListener.on('mail', async (mail, seqno, attributes) => {
+  let outMedia = await mailListenerMediaToStandardMedia(mail)
   spacebroClient.emit(settings.service.spacebro.client.out.outMedia.eventName, outMedia)
   console.log('emit ' + JSON.stringify(outMedia, null, 2))
 })

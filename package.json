@@ -21,6 +21,7 @@
     "mail-listener-fixed": "ImTheDeveloper/mail-listener-fixed",
     "mkdirp": "^0.5.1",
     "spacebro-client": "^0.4.5",
-    "standard-settings": "^1.1.11"
+    "standard-settings": "^1.1.11",
+    "uniquefilename": "^1.1.2"
   }
 }
