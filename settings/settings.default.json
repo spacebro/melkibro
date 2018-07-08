@@ -34,8 +34,10 @@
       "debug": null,
       "mailbox": "INBOX",
       "filter": ["UNSEEN"],
+      "setSince": false,
+      "fetchFromNow": false,
       "markSeen": true,
-      "fetchUnreadOnStart": true,
+      "fetchOnStart": false,
       "attachmentOptions": {
         "download": true
       }

@@ -69,7 +69,7 @@ let mailListenerMediaToStandardMedia = async (mail) => {
     }
   }
 
-  if (mail.attachments) {
+  if (mail.attachments && mail.attachments.length) {
     let file = mail.attachments[0]
     let filepath = await helpers.getUniquePath(file.filename, settings.folder.output)
     await writeFile(filepath, file.content)
@@ -78,18 +78,16 @@ let mailListenerMediaToStandardMedia = async (mail) => {
 
   let bucketAndToken = getBucketAndToken(mail.from.value[0].address)
   if (bucketAndToken.bucket) {
-    media.meta = {
-      altruist: {
-        socialite: {
-          bucket: bucketAndToken.bucket,
-          token: bucketAndToken.token
-        },
-        mandrill: {
-          template: bucketAndToken.bucket
-        }
+    media.meta.altruist = {
+      socialite: {
+        bucket: bucketAndToken.bucket,
+        token: bucketAndToken.token
       },
-      theme: bucketAndToken.bucket
+      mandrill: {
+        template: bucketAndToken.bucket
+      }
     }
+    media.meta.theme = bucketAndToken.bucket
   }
 
   return media
