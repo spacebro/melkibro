@@ -20,6 +20,7 @@
     "fs-extra": "^6.0.1",
     "mail-listener-fixed": "ImTheDeveloper/mail-listener-fixed",
     "mkdirp": "^0.5.1",
+    "moment": "^2.22.2",
     "spacebro-client": "^0.4.5",
     "standard-settings": "^1.1.11",
     "uniquefilename": "^1.1.2"
