@@ -1,6 +1,9 @@
 const SpacebroClient = require('spacebro-client').SpacebroClient
 const standardSettings = require('standard-settings')
 const MailListener = require('mail-listener-fixed')
+const jsdom = require('jsdom')
+const striptags = require('striptags')
+const { JSDOM } = jsdom
 // const download = require('download')
 const express = require('express')
 const path = require('path')
@@ -9,6 +12,7 @@ const fs = require('fs-extra')
 const util = require('util')
 const writeFileAsync = util.promisify(fs.writeFile)
 const _ = require('lodash')
+const splitLines = require('split-lines')
 const helpers = require('./lib/helpers')
 var settings = standardSettings.getSettings()
 
@@ -41,6 +45,23 @@ let getBucketAndToken = (address) => {
     }
   }
   return bucketAndToken
+}
+
+let parseBody = async (htmlText) => {
+  let params = {}
+  if (htmlText) {
+    const dom = new JSDOM(htmlText)
+    let body = dom.window.document.querySelector('body').textContent.trim()
+    body = striptags(body)
+    let lines = splitLines(body)
+    lines.forEach(el => {
+      let section = el.split(':')
+      if (section.length === 2) {
+        params[section[0].toLowerCase().trim()] = section[1].trim()
+      }
+    })
+  }
+  return params
 }
 
 let mailListenerMediaToStandardMedia = async (mail) => {
@@ -95,6 +116,8 @@ mailListener.on('error', (err) => {
 
 mailListener.on('mail', async (mail, seqno, attributes) => {
   let outMedia = await mailListenerMediaToStandardMedia(mail)
+  let metas = await parseHeadooBody(mail.html)
+  console.log(metas)
   spacebroClient.emit(settings.service.spacebro.client.out.outMedia.eventName, outMedia)
   console.log('emit ' + JSON.stringify(outMedia, null, 2))
 })

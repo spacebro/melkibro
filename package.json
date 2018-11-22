@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "dev": "./node_modules/.bin/nodemon index.js",
+    "dev": "./node_modules/.bin/nodemon index.js --watch ./settings/ --watch index.js --watch ./lib/",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
@@ -14,16 +14,19 @@
     "mail-listener"
   ],
   "author": "Emmanuel Geoffray",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "download": "^6.2.5",
     "express": "^4.16.2",
     "fs-extra": "^6.0.1",
+    "jsdom": "^13.0.0",
     "mail-listener-fixed": "ImTheDeveloper/mail-listener-fixed",
     "mkdirp": "^0.5.1",
     "moment": "^2.22.2",
     "spacebro-client": "^0.4.5",
+    "split-lines": "^2.0.0",
     "standard-settings": "^1.1.11",
+    "striptags": "^3.1.1",
     "uniquefilename": "^1.1.2"
   },
   "devDependencies": {
