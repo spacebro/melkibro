@@ -19,21 +19,6 @@ var mailListener = new MailListener(settings.service.mail)
 mkdirp(settings.folder.output)
 mkdirp(settings.folder.tmp)
 
-mailListener.start() // start listening
-
-mailListener.on('connected', () => {
-  console.log('imapConnected')
-})
-
-mailListener.on('disconnected', () => {
-  console.log('imapDisconnected')
-  mailListener.start()
-})
-
-mailListener.on('error', (err) => {
-  console.log(err)
-})
-
 let getBucketAndToken = (address) => {
   let bucketAndToken = {}
   if (address === undefined) {
@@ -93,11 +78,26 @@ let mailListenerMediaToStandardMedia = async (mail) => {
   return media
 }
 
+mailListener.on('connected', () => {
+  console.log('imapConnected')
+})
+
+mailListener.on('disconnected', () => {
+  console.log('imapDisconnected')
+  mailListener.start()
+})
+
+mailListener.on('error', (err) => {
+  console.error(err)
+})
+
 mailListener.on('mail', async (mail, seqno, attributes) => {
   let outMedia = await mailListenerMediaToStandardMedia(mail)
   spacebroClient.emit(settings.service.spacebro.client.out.outMedia.eventName, outMedia)
   console.log('emit ' + JSON.stringify(outMedia, null, 2))
 })
+
+mailListener.start() // start listening
 
 var app = express()
 app.use(express.static(settings.folder.output))
