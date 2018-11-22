@@ -88,7 +88,9 @@ mailListener.on('disconnected', () => {
 })
 
 mailListener.on('error', (err) => {
+  console.error('An error occured: ')
   console.error(err)
+  process.exit(1)
 })
 
 mailListener.on('mail', async (mail, seqno, attributes) => {
