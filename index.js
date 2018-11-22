@@ -83,7 +83,7 @@ let mailListenerMediaToStandardMedia = async (mail) => {
   }
 
   let bucketAndToken = getBucketAndToken(mail.from.value[0].address)
-  if (bucketAndToken.bucket) {
+  if (bucketAndToken.bucket !== 'default') {
     media.meta.altruist = {
       socialite: {
         bucket: bucketAndToken.bucket,
@@ -95,7 +95,6 @@ let mailListenerMediaToStandardMedia = async (mail) => {
     }
     media.meta.theme = bucketAndToken.bucket
   }
-
   return media
 }
 
@@ -116,8 +115,11 @@ mailListener.on('error', (err) => {
 
 mailListener.on('mail', async (mail, seqno, attributes) => {
   let outMedia = await mailListenerMediaToStandardMedia(mail)
-  let metas = await parseHeadooBody(mail.html)
-  console.log(metas)
+  let metas = await parseBody(mail.html)
+  if (settings.checkMetaInBody) {
+    outMedia.meta.email = metas['e-mail'] ? metas['e-mail'] : outMedia.meta.email
+    
+  }
   spacebroClient.emit(settings.service.spacebro.client.out.outMedia.eventName, outMedia)
   console.log('emit ' + JSON.stringify(outMedia, null, 2))
 })
