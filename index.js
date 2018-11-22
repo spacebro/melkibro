@@ -1,13 +1,13 @@
 const SpacebroClient = require('spacebro-client').SpacebroClient
-var standardSettings = require('standard-settings')
-var MailListener = require('mail-listener-fixed')
+const standardSettings = require('standard-settings')
+const MailListener = require('mail-listener-fixed')
 // const download = require('download')
 const express = require('express')
 const path = require('path')
 const mkdirp = require('mkdirp')
 const fs = require('fs-extra')
 const util = require('util')
-const writeFile = util.promisify(fs.writeFile)
+const writeFileAsync = util.promisify(fs.writeFile)
 const _ = require('lodash')
 const helpers = require('./lib/helpers')
 var settings = standardSettings.getSettings()
@@ -72,7 +72,7 @@ let mailListenerMediaToStandardMedia = async (mail) => {
   if (mail.attachments && mail.attachments.length) {
     let file = mail.attachments[0]
     let filepath = await helpers.getUniquePath(file.filename, settings.folder.output)
-    await writeFile(filepath, file.content)
+    await writeFileAsync(filepath, file.content)
     media.url = `http://${settings.server.host}:${settings.server.port}/${path.relative(settings.folder.output, filepath)}`
   }
 
