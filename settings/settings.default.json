@@ -3,6 +3,9 @@
     "host": "localhost",
     "port": 36450
   },
+  "logger":{
+    "level": "debug"
+  },
   "service": {
     "spacebro":{
       "host": "spacebro.space",

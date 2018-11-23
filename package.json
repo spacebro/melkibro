@@ -27,7 +27,8 @@
     "split-lines": "^2.0.0",
     "standard-settings": "^1.1.11",
     "striptags": "^3.1.1",
-    "uniquefilename": "^1.1.2"
+    "uniquefilename": "^1.1.2",
+    "winston": "^3.1.0"
   },
   "devDependencies": {
     "nodemon": "^1.18.6"

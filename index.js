@@ -14,6 +14,7 @@ const writeFileAsync = util.promisify(fs.writeFile)
 const _ = require('lodash')
 const splitLines = require('split-lines')
 const helpers = require('./lib/helpers')
+const winston = require('winston')
 var settings = standardSettings.getSettings()
 
 var spacebroClient = new SpacebroClient()
@@ -22,6 +23,18 @@ settings.service.mail.debug = console.log
 var mailListener = new MailListener(settings.service.mail)
 mkdirp(settings.folder.output)
 mkdirp(settings.folder.tmp)
+
+const log = winston.createLogger({
+  level: settings.logger.level,
+  format: winston.format.combine(
+    winston.format.colorize({ all: true }),
+    winston.format.splat(),
+    winston.format.simple()
+  ),
+  transports: [
+    new winston.transports.Console()
+  ]
+})
 
 let getBucketAndToken = (address) => {
   let bucketAndToken = {}
@@ -48,23 +61,32 @@ let getBucketAndToken = (address) => {
 }
 
 let parseBody = async (htmlText) => {
+  log.info('🤖 - start parsing body')
+  log.debug(htmlText)
   let params = {}
   if (htmlText) {
     const dom = new JSDOM(htmlText)
     let body = dom.window.document.querySelector('body').textContent.trim()
+    log.debug('body:')
+    log.debug(body)
     body = striptags(body)
     let lines = splitLines(body)
     lines.forEach(el => {
+      log.debug('line:')
+      log.debug(el)
       let section = el.split(':')
       if (section.length === 2) {
         params[section[0].toLowerCase().trim()] = section[1].trim()
       }
     })
+    log.debug('params:')
+    log.debug(params)
   }
   return params
 }
 
 let mailListenerMediaToStandardMedia = async (mail) => {
+  log.info('🏭 - transform email media to standard media')
   let mailObject = JSON.parse(JSON.stringify(mail))
   delete mailObject.attachments
   delete mailObject.eml
@@ -76,6 +98,7 @@ let mailListenerMediaToStandardMedia = async (mail) => {
   }
 
   if (mail.attachments && mail.attachments.length) {
+    log.debug('📎 - attachments found')
     let file = mail.attachments[0]
     let filepath = await helpers.getUniquePath(file.filename, settings.folder.output)
     await writeFileAsync(filepath, file.content)
@@ -83,6 +106,8 @@ let mailListenerMediaToStandardMedia = async (mail) => {
   }
 
   let bucketAndToken = getBucketAndToken(mail.from.value[0].address)
+  log.debug('🔐 - bucketAndToken')
+  log.debug(bucketAndToken)
   if (bucketAndToken.bucket !== 'default') {
     media.meta.altruist = {
       socialite: {
@@ -99,29 +124,33 @@ let mailListenerMediaToStandardMedia = async (mail) => {
 }
 
 mailListener.on('connected', () => {
-  console.log('imapConnected')
+  log.info('imapConnected')
 })
 
 mailListener.on('disconnected', () => {
-  console.log('imapDisconnected')
+  log.info('imapDisconnected')
   mailListener.start()
 })
 
 mailListener.on('error', (err) => {
-  console.error('An error occured: ')
-  console.error(err)
+  log.error('An error occured: ')
+  log.error(err)
   process.exit(1)
 })
 
 mailListener.on('mail', async (mail, seqno, attributes) => {
+  log.info('📩 - new mail')
   let outMedia = await mailListenerMediaToStandardMedia(mail)
   let metas = await parseBody(mail.html)
+  log.debug('metas:')
+  log.debug(metas)
   if (settings.checkMetaInBody) {
+    log.debug('using email from body')
     outMedia.meta.email = metas['e-mail'] ? metas['e-mail'] : outMedia.meta.email
-    
   }
+  log.info(`📡 - Emit ${settings.service.spacebro.client.out.outMedia.eventName}`)
+  log.info(JSON.stringify(outMedia, null, 2))
   spacebroClient.emit(settings.service.spacebro.client.out.outMedia.eventName, outMedia)
-  console.log('emit ' + JSON.stringify(outMedia, null, 2))
 })
 
 mailListener.start() // start listening
