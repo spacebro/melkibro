@@ -1,6 +1,16 @@
 # melkibro
 
-A simple app to listen emails on an inbox and send them as media on spacebro.  
+An app to listen to emails on an inbox and send them as media on spacebro.  
+
+### Features
+
+- support attachments
+- parse body to add metas to your media
+- use following field for mail in body:
+   - e-mail,
+   - email,
+   - mail
+
 
 ## ❓Why ?
 

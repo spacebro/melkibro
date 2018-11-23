@@ -125,7 +125,7 @@ let mailListenerMediaToStandardMedia = async (mail) => {
 
 let getMailBody = (content) => {
   let body = ''
-  if(content.text && content.text.length > 0) {
+  if (content.text && content.text.length > 0) {
     body = content.text
   } else if (content.textAsHtml && content.textAsHtml.length > 0) {
     body = content.textAsHtml
@@ -133,6 +133,22 @@ let getMailBody = (content) => {
     body = content.html
   }
   return body
+}
+
+let getEmailField = (metas) => {
+  let emailvalue = ''
+  if (metas['e-mail']) {
+    emailvalue = metas['e-mail']
+  } else if (metas['email']) {
+    emailvalue = metas['email']
+  } else if (metas['mail']) {
+    emailvalue = metas['mail']
+  }
+  if (emailvalue.length < 1) {
+    log.warn('The emailvalue is empty. Can\'t find any email in metas')
+    log.warn(metas)
+  }
+  return emailvalue
 }
 
 mailListener.on('connected', () => {
@@ -159,7 +175,8 @@ mailListener.on('mail', async (mail, seqno, attributes) => {
   log.debug(metas)
   if (settings.checkMetaInBody) {
     log.debug('using email from body')
-    outMedia.meta.email = metas['e-mail'] ? metas['e-mail'] : outMedia.meta.email
+    let email = getEmailField(metas)
+    outMedia.meta.email = email.length > 0 ? email : outMedia.meta.email
   }
   log.info(`📡 - Emit ${settings.service.spacebro.client.out.outMedia.eventName}`)
   log.info(JSON.stringify(outMedia, null, 2))
