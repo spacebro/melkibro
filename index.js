@@ -123,6 +123,18 @@ let mailListenerMediaToStandardMedia = async (mail) => {
   return media
 }
 
+let getMailBody = (content) => {
+  let body = ''
+  if(content.text && content.text.length > 0) {
+    body = content.text
+  } else if (content.textAsHtml && content.textAsHtml.length > 0) {
+    body = content.textAsHtml
+  } else if (content.html && content.html.length > 0) {
+    body = content.html
+  }
+  return body
+}
+
 mailListener.on('connected', () => {
   log.info('imapConnected')
 })
@@ -141,7 +153,8 @@ mailListener.on('error', (err) => {
 mailListener.on('mail', async (mail, seqno, attributes) => {
   log.info('📩 - new mail')
   let outMedia = await mailListenerMediaToStandardMedia(mail)
-  let metas = await parseBody(mail.html)
+  let mailBody = getMailBody(mail)
+  let metas = await parseBody(mailBody)
   log.debug('metas:')
   log.debug(metas)
   if (settings.checkMetaInBody) {
