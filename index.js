@@ -15,6 +15,7 @@ const _ = require('lodash')
 const splitLines = require('split-lines')
 const helpers = require('./lib/helpers')
 const winston = require('winston')
+const assignment = require('assignment')
 var settings = standardSettings.getSettings()
 
 var spacebroClient = new SpacebroClient()
@@ -177,6 +178,16 @@ mailListener.on('mail', async (mail, seqno, attributes) => {
     log.debug('using email from body')
     let email = getEmailField(metas)
     outMedia.meta.email = email.length > 0 ? email : outMedia.meta.email
+  }
+  if (settings.defaultMeta) {
+    let defaultMediaMeta = JSON.parse(JSON.stringify(settings.defaultMeta))
+    console.log('Media meta default: ')
+    console.log(defaultMediaMeta)
+    console.log('------')
+    console.log('Media metas')
+    console.log(outMedia.meta)
+    console.log('======')
+    outMedia.meta = assignment(outMedia.meta, defaultMediaMeta)
   }
   log.info(`📡 - Emit ${settings.service.spacebro.client.out.outMedia.eventName}`)
   log.info(JSON.stringify(outMedia, null, 2))
