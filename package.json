@@ -16,22 +16,24 @@
   "author": "Emmanuel Geoffray",
   "license": "MIT",
   "dependencies": {
+    "@sindresorhus/slugify": "^0.9.1",
     "assignment": "^2.2.1",
-    "download": "^6.2.5",
-    "express": "^4.16.2",
-    "fs-extra": "^6.0.1",
-    "jsdom": "^13.0.0",
+    "date-fns": "^2.9.0",
+    "download": "^7.1.0",
+    "express": "^4.17.1",
+    "fs-extra": "^8.1.0",
+    "jsdom": "^15.2.1",
     "mail-listener-fixed": "ImTheDeveloper/mail-listener-fixed",
     "mkdirp": "^0.5.1",
-    "moment": "^2.22.2",
+    "slash": "^3.0.0",
     "spacebro-client": "^0.4.5",
     "split-lines": "^2.0.0",
-    "standard-settings": "^1.1.11",
+    "standard-settings": "^2.0.3",
     "striptags": "^3.1.1",
     "uniquefilename": "^1.1.2",
-    "winston": "^3.1.0"
+    "winston": "^3.2.1"
   },
   "devDependencies": {
-    "nodemon": "^1.18.6"
+    "nodemon": "^2.0.2"
   }
 }

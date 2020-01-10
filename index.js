@@ -16,6 +16,8 @@ const splitLines = require('split-lines')
 const helpers = require('./lib/helpers')
 const winston = require('winston')
 const assignment = require('assignment')
+const slugify = require('@sindresorhus/slugify')
+const slash = require('slash')
 var settings = standardSettings.getSettings()
 
 var spacebroClient = new SpacebroClient()
@@ -101,7 +103,9 @@ let mailListenerMediaToStandardMedia = async (mail) => {
   if (mail.attachments && mail.attachments.length) {
     log.debug('📎 - attachments found')
     let file = mail.attachments[0]
-    let filepath = await helpers.getUniquePath(file.filename, settings.folder.output)
+    let fileName = slash(file.filename)
+    fileName = slugify(path.basename(fileName, path.extname(fileName))) + path.extname(fileName)
+    let filepath = await helpers.getUniquePath(fileName, settings.folder.output)
     await writeFileAsync(filepath, file.content)
     media.url = `http://${settings.server.host}:${settings.server.port}/${path.relative(settings.folder.output, filepath)}`
   }
