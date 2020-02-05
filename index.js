@@ -4,6 +4,7 @@ const MailListener = require('mail-listener-fixed')
 const jsdom = require('jsdom')
 const striptags = require('striptags')
 const { JSDOM } = jsdom
+const nanoid = require('nanoid')
 // const download = require('download')
 const express = require('express')
 const path = require('path')
@@ -107,7 +108,13 @@ let mailListenerMediaToStandardMedia = async (mail) => {
   if (mail.attachments && mail.attachments.length) {
     log.debug('📎 - attachments found')
     let file = mail.attachments[0]
-    let fileName = slash(file.filename)
+    let fileName
+    if(!file.filename) {
+      fileName = nanoid()
+      fileName = `${fileName}.${file.contentType.split('/').pop()}`
+    } else {
+      fileName = slash(file.filename)
+    }
     fileName = slugify(path.basename(fileName, path.extname(fileName))) + path.extname(fileName)
     log.debug(`📎 - ${fileName}`)
     try {
