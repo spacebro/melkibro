@@ -211,12 +211,12 @@ mailListener.on('mail', async (mail, seqno, attributes) => {
     console.log('======')
     outMedia.meta = assignment(outMedia.meta, defaultMediaMeta)
   }
-  log.info(`📡 - Emit ${settings.service.spacebro.client.out.outMedia.eventName}`)
-  log.info(JSON.stringify(outMedia, null, 2))
   if(outMedia.meta.email === settings.service.mail.imapOptions.user) {
-    log.warning('The sender and the emitter are on the same inbox, you are about to start an infinit loop')
-    log.warning('not sending')
+    log.warn('The sender and the emitter are on the same inbox, you are about to start an infinit loop')
+    log.warn('not sending')
   } else {
+    log.info(`📡 - Emit ${settings.service.spacebro.client.out.outMedia.eventName}`)
+    log.info(JSON.stringify(outMedia, null, 2))
     spacebroClient.emit(settings.service.spacebro.client.out.outMedia.eventName, outMedia)
   }
 })
