@@ -24,9 +24,6 @@ var spacebroClient = new SpacebroClient()
 _.set(settings.service.mail, 'attachmentOptions.directory', settings.folder.output + '/')
 settings.service.mail.debug = console.log
 var mailListener = new MailListener(settings.service.mail)
-mkdirp(settings.folder.output)
-mkdirp(settings.folder.tmp)
-
 const log = winston.createLogger({
   level: settings.logger.level,
   format: winston.format.combine(
@@ -38,6 +35,13 @@ const log = winston.createLogger({
     new winston.transports.Console()
   ]
 })
+
+try {
+  mkdirp(settings.folder.output)
+  mkdirp(settings.folder.tmp)
+} catch (err) {
+  log.error('can\'t create folder')
+}
 
 let getBucketAndToken = (address) => {
   let bucketAndToken = {}
@@ -105,19 +109,26 @@ let mailListenerMediaToStandardMedia = async (mail) => {
     let file = mail.attachments[0]
     let fileName = slash(file.filename)
     fileName = slugify(path.basename(fileName, path.extname(fileName))) + path.extname(fileName)
-    let filepath = await helpers.getUniquePath(fileName, settings.folder.output)
-    await writeFileAsync(filepath, file.content)
-    media.url = `http://${settings.server.host}:${settings.server.port}/${path.relative(settings.folder.output, filepath)}`
+    log.debug(`📎 - ${fileName}`)
+    try {
+      let filepath = await helpers.getUniquePath(fileName, settings.folder.output)
+      await writeFileAsync(filepath, file.content)
+      media.url = `http://${settings.server.host}:${settings.server.port}/${path.relative(settings.folder.output, filepath)}`
+    } catch (err) {
+      log.error('An error occured while creating the file')
+      log.error(err.message)
+    }
   }
 
   let bucketAndToken = getBucketAndToken(mail.from.value[0].address)
   log.debug('🔐 - bucketAndToken')
   log.debug(bucketAndToken)
   if (bucketAndToken.bucket !== 'default') {
+    let token = (typeof bucketAndToken.token === 'undefined') ? settings.defaultMeta.altruist.socialite.token : bucketAndToken.token
     media.meta.altruist = {
       socialite: {
         bucket: bucketAndToken.bucket,
-        token: bucketAndToken.token
+        token: token
       },
       mandrill: {
         template: bucketAndToken.bucket
