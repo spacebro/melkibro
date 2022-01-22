@@ -25,7 +25,7 @@
     "jsdom": "^16.1.0",
     "mail-listener-fixed": "ImTheDeveloper/mail-listener-fixed",
     "mkdirp": "^1.0.3",
-    "nanoid": "^2.1.11",
+    "nanoid": "^3.1.31",
     "slash": "^3.0.0",
     "spacebro-client": "^0.4.8",
     "split-lines": "^2.0.0",
