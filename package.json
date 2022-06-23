@@ -22,7 +22,7 @@
     "download": "^7.1.0",
     "express": "^4.17.1",
     "fs-extra": "^8.1.0",
-    "jsdom": "^16.1.0",
+    "jsdom": "^16.5.0",
     "mail-listener-fixed": "ImTheDeveloper/mail-listener-fixed",
     "mkdirp": "^1.0.3",
     "nanoid": "^2.1.11",
